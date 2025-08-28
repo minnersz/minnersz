@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>All of me</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎁</text></svg>">
+  <script defer src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+  <style>
+    /* เขย่าช่องกรอกรหัสเมื่อผิด */
+    .shake { animation: shake 0.3s; }
+    @keyframes shake {
+      0% { transform: translateX(0); } 25% { transform: translateX(-6px); }
+      50% { transform: translateX(6px); } 75% { transform: translateX(-6px); }
+      100% { transform: translateX(0); }
+    }
+
+    /* ---------- พื้นหลังพาสเทล + ลายจุด + ลายหัวใจ ---------- */
+    body {
+      /* ไล่สีพาสเทลหลัก */
+      background: linear-gradient(180deg, #ffe4e6 0%, #fce7f3 35%, #e0f2fe 100%);
+      min-height: 100vh;
+      position: relative;
+      overflow: hidden;
+      user-select: none;
+    }
+
+    /* ลายจุดสีขาวจาง ๆ ทับบน gradient (โปร่งเพื่อไม่รบกวนข้อความ) */
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background-image: radial-gradient(rgba(255,255,255,0.7) 1px, transparent 1px);
+      background-size: 22px 22px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ลายหัวใจโปร่ง ๆ ซ้ำทั้งหน้า (SVG แบบ data URI) */
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      background-image: url("data:image/svg+xml;utf8,\
+<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100' opacity='0.12'>\
+  <path d='M50 84 C35 74 12 60 12 40 C12 26 24 16 36 16 C43 16 47 19 50 23 C53 19 57 16 64 16 C76 16 88 26 88 40 C88 60 65 74 50 84 Z' fill='%23f9a8d4'/>\
+</svg>");
+      background-size: 120px 120px;
+      background-repeat: repeat;
+      background-position: center;
+    }
+
+    /* วงกลมเบลอพาสเทลเพิ่มความฟุ้งฟิ้ง */
+    .blob {
+      position: fixed;
+      border-radius: 9999px;
+      filter: blur(60px);
+      opacity: .35;
+      z-index: 0;
+      pointer-events: none;
+    }
+    .blob-1 { width: 280px; height: 280px; background:#fda4af; top:-40px; left:-40px; }
+    .blob-2 { width: 340px; height: 340px; background:#c4b5fd; bottom: -60px; right: -30px; }
+    .blob-3 { width: 260px; height: 260px; background:#a7f3d0; top: 40%; left: -80px; }
+  </style>
+</head>
+
+<body class="flex items-center justify-center">
+
+  <!-- วงกลมเบลอ (ตกแต่งพื้นหลัง) -->
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+  <div class="blob blob-3"></div>
+
+  <!-- คอนเทนต์ให้อยู่บนสุดเสมอ -->
+  <div class="relative z-10 w-full flex items-center justify-center">
+
+    <!-- หน้าแรก -->
+    <section id="welcome" class="text-center space-y-6 p-6">
+      <button id="enterBtn" class="px-6 py-3 bg-pink-500 text-white rounded-xl shadow hover:opacity-90">
+        Click me !
+      </button>
+    </section>
+
+    <!-- หน้ากรอกรหัส -->
+    <section id="passwordPage" class="hidden text-center space-y-4 p-6">
+      <h2 class="text-xl font-semibold">Password</h2>
+      <div>
+        <input
+          id="codeInput"
+          type="password"
+          inputmode="numeric"
+          pattern="[0-9]*"
+          maxlength="3"
+          class="border rounded-lg px-4 py-2 text-center tracking-widest text-lg w-28 bg-white/80 backdrop-blur"
+          placeholder="_ _ _"
+          autocomplete="off"
+        />
+      </div>
+      <div class="space-x-2">
+        <button id="checkBtn" class="px-5 py-2 bg-blue-500 text-white rounded-lg hover:opacity-90">ยืนยัน</button>
+        <button id="backBtn"  class="px-5 py-2 bg-gray-200 rounded-lg hover:bg-gray-300">ย้อนกลับ</button>
+      </div>
+      <p id="errorMsg" class="text-red-500 text-sm hidden">รหัสไม่ถูกต้อง ลองใหม่อีกครั้ง</p>
+    </section>
+
+    <!-- หน้าคำอวยพร -->
+    <section id="hbd" class="hidden text-center p-6 max-w-xl">
+      <div class="bg-white/70 backdrop-blur rounded-3xl p-4 shadow-lg">
+        <h1 class="text-3xl font-bold mb-4">Happy Birthday, Mygall!</h1>
+        <p class="mb-4">
+          โตขึ้นอีกปีแล้วนะคะ ปีนี้ขอให้หนูมีความสุขมากๆ ขอให้หนูเรียนจบภายในปีนี้
+          อยากทำอะไรหนูลงมือทำเลยไม่ว่าผลมันจะเป็นยังไงพี่จะอยู่ข้างๆเสมอนะ 💕
+        </p>
+        <img src="gall.jpg" alt="birthday" class="mx-auto w-48 h-48 rounded-full object-cover shadow-lg mb-4">
+        <button
+          onclick="confetti({ particleCount:120, spread:70, origin:{y:0.6} })"
+          class="px-4 py-2 bg-yellow-400 rounded-lg shadow"
+        >
+          🎉 มีความสุขมากๆนะคะ
+        </button>
+      </div>
+    </section>
+
+  </div>
+
+  <script>
+    const enterBtn     = document.getElementById('enterBtn');
+    const welcome      = document.getElementById('welcome');
+    const passwordPage = document.getElementById('passwordPage');
+    const hbd          = document.getElementById('hbd');
+    const checkBtn     = document.getElementById('checkBtn');
+    const backBtn      = document.getElementById('backBtn');
+    const codeInput    = document.getElementById('codeInput');
+    const errorMsg     = document.getElementById('errorMsg');
+
+    // <<< ตั้งรหัสลับตรงนี้ (3 หลัก) >>>
+    const SECRET_CODE = "318";
+
+    // หน้าแรก -> หน้ากรอกรหัส
+    enterBtn.onclick = () => {
+      welcome.classList.add('hidden');
+      passwordPage.classList.remove('hidden');
+      errorMsg.classList.add('hidden');
+      codeInput.value = "";
+      setTimeout(() => codeInput.focus(), 50);
+    };
+
+    // ย้อนกลับไปหน้าแรก
+    backBtn.onclick = () => {
+      passwordPage.classList.add('hidden');
+      welcome.classList.remove('hidden');
+    };
+
+    // จำกัดให้พิมพ์เป็นตัวเลขเท่านั้น
+    codeInput.addEventListener('input', (e) => {
+      e.target.value = e.target.value.replace(/\D/g, '').slice(0, 3);
+      errorMsg.classList.add('hidden');
+    });
+
+    // ตรวจรหัส
+    function verify() {
+      if (codeInput.value === SECRET_CODE) {
+        passwordPage.classList.add('hidden');
+        hbd.classList.remove('hidden');
+        confetti({ particleCount: 120, spread: 70, origin: { y: 0.6 } });
+      } else {
+        errorMsg.classList.remove('hidden');
+        codeInput.classList.remove('shake'); // รีเซ็ตแอนิเมชัน
+        void codeInput.offsetWidth;          // reflow
+        codeInput.classList.add('shake');    // เขย่าเบา ๆ
+        codeInput.value = "";
+        codeInput.focus();
+      }
+    }
+
+    checkBtn.onclick = verify;
+
+    // กด Enter เพื่อยืนยัน
+    codeInput.addEventListener('keyup', (e) => {
+      if (e.key === 'Enter') verify();
+    });
+  </script>
+</body>
+</html>
