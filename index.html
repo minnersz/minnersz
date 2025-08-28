@@ -45,7 +45,6 @@
   </style>
 </head>
 
-
 <body class="flex items-center justify-center">
   <div class="blob blob-1"></div>
   <div class="blob blob-2"></div>
@@ -93,7 +92,8 @@
             <span>:</span>
             <span id="cd-secs">00</span><span class="text-base font-normal">วินาที</span>
           </div>
-          <p id="countdownMsg" class="mt-2 text-sm text-gray-600"></p>
+          <!-- เพิ่ม whitespace-pre-line เพื่อรองรับ \n -->
+          <p id="countdownMsg" class="mt-2 text-sm text-gray-600 whitespace-pre-line"></p>
         </div>
 
         <p class="mb-4">
@@ -178,7 +178,6 @@
       const elMins = document.getElementById('cd-mins');
       const elSecs = document.getElementById('cd-secs');
       const elMsg = document.getElementById('countdownMsg');
-      const btn = document.getElementById('confettiBtn');
 
       function update() {
         const now = new Date();
@@ -187,8 +186,11 @@
         if (diff <= 0) {
           clearInterval(timer);
           elDays.textContent = elHours.textContent = elMins.textContent = elSecs.textContent = '00';
-          elMsg.textContent = 'สุขสันต์วันเกิดนะคะ พี่รักหนูนะ 🎂🎉';
-          // ปุ่มกดได้เสมอ (ไม่ล็อค) — ไม่มีการตั้ง disabled ใดๆ
+
+          // ข้อความ 2 บรรทัดด้วย \n (รองรับด้วย whitespace-pre-line)
+          elMsg.textContent =
+            'สุขสันต์วันเกิดนะคะ เป็นแฟนกับพี่ได้มั้ยคะ\nเผื่อวันเกิดปีหน้าของหนูจะเป็นวันเดียวกับวันครบรอบ 1 ปีพอดี 🎂🎉';
+
           confetti({ particleCount: 180, spread: 80, origin: { y: 0.6 } });
           return;
         }
@@ -203,16 +205,12 @@
         elHours.textContent = String(hours).padStart(2, '0');
         elMins.textContent = String(mins).padStart(2, '0');
         elSecs.textContent = String(secs).padStart(2, '0');
-        elMsg.textContent = `เปิดไว้ก่อนถึงวันเกิด พี่มีอะไรจะบอก`;
+        elMsg.textContent = 'เปิดไว้ก่อนถึงวันเกิด พี่มีอะไรจะบอก';
       }
 
       update();
       const timer = setInterval(update, 1000);
-      // ไม่มีการเช็ค/ตั้ง disabled สำหรับปุ่ม
     }
   </script>
 </body>
 </html>
-
-
-
