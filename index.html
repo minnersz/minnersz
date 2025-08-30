@@ -51,14 +51,13 @@
   <div class="blob blob-3"></div>
 
   <div class="relative z-10 w-full flex items-center justify-center">
-    <!-- หน้าแรก -->
+    
     <section id="welcome" class="text-center space-y-6 p-6">
       <button id="enterBtn" class="px-6 py-3 bg-pink-500 text-white rounded-xl shadow hover:opacity-90">
         Click me !
       </button>
     </section>
 
-    <!-- หน้ากรอกรหัส -->
     <section id="passwordPage" class="hidden text-center space-y-4 p-6">
       <h2 class="text-xl font-semibold">Password</h2>
       <div>
@@ -72,13 +71,11 @@
       </div>
       <p id="errorMsg" class="text-red-500 text-sm hidden">รหัสไม่ถูกต้อง ลองใหม่อีกครั้ง</p>
     </section>
-
-    <!-- หน้าคำอวยพร -->
+    
     <section id="hbd" class="hidden text-center p-6 max-w-xl">
       <div class="bg-white/70 backdrop-blur rounded-3xl p-4 shadow-lg">
         <h1 class="text-3xl font-bold mb-4">Happy Birthday, Mygall!</h1>
 
-        <!-- กล่องนับถอยหลัง -->
         <div id="countdownBox" class="mb-4">
           <p class="text-sm text-gray-700">31 August</p>
           <div id="countdown"
@@ -92,7 +89,7 @@
             <span>:</span>
             <span id="cd-secs">00</span><span class="text-base font-normal">วินาที</span>
           </div>
-          <!-- เพิ่ม whitespace-pre-line เพื่อรองรับ \n -->
+          
           <p id="countdownMsg" class="mt-2 text-sm text-gray-600 whitespace-pre-line"></p>
         </div>
 
@@ -145,7 +142,7 @@
         passwordPage.classList.add('hidden');
         hbd.classList.remove('hidden');
         confetti({ particleCount: 120, spread: 70, origin: { y: 0.6 } });
-        startCountdown(); // เริ่มนับถอยหลังเมื่อเข้าสู่หน้า hbd
+        startCountdown();
       } else {
         errorMsg.classList.remove('hidden');
         codeInput.classList.remove('shake');
@@ -162,10 +159,8 @@
   function getNextBirthdayTarget() {
     const now = new Date();
     const year = now.getFullYear();
-    // เดือนใน JS เริ่มที่ 0 → 7 = สิงหาคม
-    let target = new Date(year, 7, 31, 0, 0, 0); // 31 ส.ค. 00:00
+    let target = new Date(year, 7, 31, 0, 0, 0);
     if (now > target) {
-      // ถ้าเลยวันที่ 31 ส.ค. ปีนี้แล้ว ให้เลื่อนไปปีหน้า
       target = new Date(year + 1, 7, 31, 0, 0, 0);
     }
     return target;
@@ -186,8 +181,6 @@
         if (diff <= 0) {
           clearInterval(timer);
           elDays.textContent = elHours.textContent = elMins.textContent = elSecs.textContent = '00';
-
-          // ข้อความ 2 บรรทัดด้วย \n (รองรับด้วย whitespace-pre-line)
           elMsg.textContent =
             'สุขสันต์วันเกิดนะคะ เป็นแฟนกับพี่ได้มั้ยคะ\nพี่อยากให้ทุกปีที่หนูโตขึ้นมีพี่อยู่ข้างๆเสมอ 🎂🎉';
 
